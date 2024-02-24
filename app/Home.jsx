@@ -12,16 +12,42 @@ import {
   Linking,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { formatDateTime } from "../utils/functions";
+import { formatDateTime } from "../src/utils/functions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const STORAGE_KEY = "savedGames";
 const Home = () => {
   const router = useRouter();
   const [data, setData] = useState([]);
   const [fixtures, setFixtures] = useState([]);
-  const [activeChoice, setActiveChoice] = useState("fixtures");
+  const [savedGames, setSavedGames] = useState([]);
   const [activeLeague, setActiveLeague] = useState(null);
-  // const data = ["hello", "hi", "welcome",  "welcome","hello", "hi", "welcome",  "welcome"]
+  const toggleGame = async (gameId) => {
+    try {
+      const updatedGames = savedGames.includes(gameId)
+        ? savedGames.filter((id) => id !== gameId)
+        : [...savedGames, gameId];
+
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedGames));
+      setSavedGames(updatedGames);
+    } catch (error) {
+      console.error("Error toggling game:", error);
+    }
+  };
   useEffect(() => {
+    const loadSavedGames = async () => {
+      try {
+        const storedGames = await AsyncStorage.getItem(STORAGE_KEY);
+        const parsedGames = storedGames ? JSON.parse(storedGames) : []; // Handle cases where value is null or non-JSON
+        setSavedGames(parsedGames);
+      } catch (error) {
+        console.error("Error loading saved games:", error);
+      }
+    };
+
+    loadSavedGames();
+  }, []);
+  useEffect(async () => {
     axios
       .get("https://api.sportmonks.com/v3/football/leagues", {
         headers: {
@@ -35,24 +61,25 @@ const Home = () => {
       });
   }, []);
   useEffect(() => {
-    axios
-      .get(
-        `https://api.sportmonks.com/v3/football/fixtures?include=participants&league_id=${activeLeague}`,
-        {
-          headers: {
-            Authorization:
-              "tYgX0otkxc857iGQk2dAVFYOiNCNGi9Qr2sUH40UVpHphNDjdeIdXvrRwb4I",
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data);
-        setFixtures(response.data.data);
-      });
+    if (activeLeague) {
+      axios
+        .get(
+          `https://api.sportmonks.com/v3/football/fixtures?include=participants&league_id=${activeLeague}`,
+          {
+            headers: {
+              Authorization:
+                "tYgX0otkxc857iGQk2dAVFYOiNCNGi9Qr2sUH40UVpHphNDjdeIdXvrRwb4I",
+            },
+          }
+        )
+        .then((response) => {
+          setFixtures(response.data.data);
+        });
+    }
   }, [activeLeague]);
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#181829", paddingBottom: 25 }}
+      style={{ flex: 1, backgroundColor: "#181829", paddingBottom: 4 }}
     >
       <Stack.Screen
         options={{
@@ -60,12 +87,12 @@ const Home = () => {
           title: "",
           headerShadowVisible: false,
           headerLeft: () => (
-            <View style={{flexDirection:"row",alignItems:"center"}}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Image
                 style={{ width: 60, height: 75 }}
                 source={require("../assets/images/logo.png")}
               />
-              <Text style={{color:"white", fontSize:24}}>KickOff</Text>
+              <Text style={{ color: "white", fontSize: 24 }}>KickOff</Text>
             </View>
           ),
         }}
@@ -163,7 +190,7 @@ const Home = () => {
       <ScrollView style={{ padding: 25 }}>
         {fixtures.length != 0 &&
           fixtures.map((fixture) => (
-            <TouchableOpacity
+            <View
               style={{
                 backgroundColor: "#14274C",
                 height: 100,
@@ -171,17 +198,37 @@ const Home = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 marginBottom: 8,
+                position: "relative",
               }}
-              onPress={() => {
-                router.push(`game-details/${fixture.id}`);
-              }}
+              key={fixture.id}
             >
-              <View
+              <TouchableOpacity
+                onPress={() => {
+                  toggleGame(fixture.id);
+                }}
+                style={{ position: "absolute", top: 16, right: 16 }}
+              >
+                {savedGames.includes(fixture.id) ? (
+                  <Image
+                    style={{ height: 24, width: 24 }}
+                    source={require("../assets/icons/red-heart.png")}
+                  />
+                ) : (
+                  <Image
+                    style={{ height: 24, width: 24 }}
+                    source={require("../assets/icons/heart.png")}
+                  />
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
                 style={{
                   alignItems: "center",
                   flexDirection: "row",
                   justifyContent: "center",
                   gap: 12,
+                }}
+                onPress={() => {
+                  router.push(`game-details/${fixture.id}`);
                 }}
               >
                 <View
@@ -202,7 +249,8 @@ const Home = () => {
                       fontSize: 18,
                     }}
                   >
-                    {fixture.participants[0].name}
+                    {fixture.participants[0].short_code ||
+                      fixture.participants[0].name}
                   </Text>
                   <Image
                     style={{ height: 40, width: 40 }}
@@ -240,11 +288,12 @@ const Home = () => {
                     numberOfLines={1}
                     style={{ color: "white", fontWeight: 700, fontSize: 18 }}
                   >
-                    {fixture.participants[1].name}
+                    {fixture.participants[1].short_code ||
+                      fixture.participants[1].name}
                   </Text>
                 </View>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
           ))}
       </ScrollView>
     </SafeAreaView>
