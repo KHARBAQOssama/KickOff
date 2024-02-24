@@ -1,8 +1,12 @@
 import { Stack } from "expo-router";
+import Navigation from "../components/Navigation";
 
 const Layout = () => {
   return (
-    <Stack/>
+    <>
+      <Stack />
+      <Navigation/>
+    </>
   );
 };
 export default Layout;
