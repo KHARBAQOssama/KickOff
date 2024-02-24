@@ -10,7 +10,7 @@ import {
   ScrollView,
   View,
 } from "react-native";
-import { formatDateTime } from "../../utils/functions";
+import { formatDateTime } from "../../src/utils/functions";
 
 const GameDetails = () => {
   const router = useRouter();
@@ -21,7 +21,7 @@ const GameDetails = () => {
     if (id) {
       axios
         .get(
-          `https://api.sportmonks.com/v3/football/fixtures/${id}?include=league;participants;lineups;lineups.player;`,
+          `https://api.sportmonks.com/v3/football/fixtures/${id}?include=league;participants;lineups;lineups.player;venue`,
           {
             headers: {
               Authorization:
@@ -121,7 +121,7 @@ const GameDetails = () => {
                 numberOfLines={1}
                 style={{ color: "#ADADAD", fontWeight: 500, marginTop: 16 }}
               >
-                {fixture.result_info}
+                {fixture.venue.name}
               </Text>
             </View>
             <View>
