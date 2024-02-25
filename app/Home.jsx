@@ -14,14 +14,23 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { formatDateTime } from "../src/utils/functions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchGames, fetchLeagues } from "../src/features/global.slice";
 
 const STORAGE_KEY = "savedGames";
 const Home = () => {
   const router = useRouter();
-  const [data, setData] = useState([]);
-  const [fixtures, setFixtures] = useState([]);
   const [savedGames, setSavedGames] = useState([]);
-  const [activeLeague, setActiveLeague] = useState(null);
+
+  const dispatch = useDispatch();
+  const { games,leagues,activeLeague } = useSelector((state) => state.global);
+  useEffect(()=>{
+    dispatch(fetchLeagues());
+  },[]);
+  useEffect(() => {
+    if (activeLeague) dispatch(fetchGames(activeLeague));
+  }, [activeLeague]);
+
   const toggleGame = async (gameId) => {
     try {
       const updatedGames = savedGames.includes(gameId)
@@ -47,36 +56,6 @@ const Home = () => {
 
     loadSavedGames();
   }, []);
-  useEffect(async () => {
-    axios
-      .get("https://api.sportmonks.com/v3/football/leagues", {
-        headers: {
-          Authorization:
-            "tYgX0otkxc857iGQk2dAVFYOiNCNGi9Qr2sUH40UVpHphNDjdeIdXvrRwb4I",
-        },
-      })
-      .then((response) => {
-        setData(response.data.data);
-        setActiveLeague(response.data.data[0].id);
-      });
-  }, []);
-  useEffect(() => {
-    if (activeLeague) {
-      axios
-        .get(
-          `https://api.sportmonks.com/v3/football/fixtures?include=participants&league_id=${activeLeague}`,
-          {
-            headers: {
-              Authorization:
-                "tYgX0otkxc857iGQk2dAVFYOiNCNGi9Qr2sUH40UVpHphNDjdeIdXvrRwb4I",
-            },
-          }
-        )
-        .then((response) => {
-          setFixtures(response.data.data);
-        });
-    }
-  }, [activeLeague]);
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "#181829", paddingBottom: 4 }}
@@ -113,9 +92,9 @@ const Home = () => {
         />
       </TouchableOpacity>
       <View style={{ paddingHorizontal: 20 }}>
-        {data.length != 0 && (
+        {leagues.length != 0 && (
           <FlatList
-            data={data}
+            data={leagues}
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={{
@@ -182,14 +161,9 @@ const Home = () => {
           />
         )}
       </View>
-      {/* <View style={{flexDirection: "row", paddingHorizontal:30 ,}}>
-        <TouchableOpacity style={{width:"50%", padding:5,borderBottomWidth: 5, borderColor: activeChoice =="fixtres"? "#246BFD":"#6D6D6D"}}>
-          <Text style={{color: activeChoice =="fixtres"? "#246BFD":"#6D6D6D",textAlign:"center",fontWeight:500, fontSize:20}}>Fixtures</Text>
-        </TouchableOpacity>
-      </View> */}
       <ScrollView style={{ padding: 25 }}>
-        {fixtures.length != 0 &&
-          fixtures.map((fixture) => (
+        {games.length != 0 &&
+          games.map((fixture) => (
             <View
               style={{
                 backgroundColor: "#14274C",
