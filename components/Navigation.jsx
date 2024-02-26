@@ -1,19 +1,40 @@
 import {
-  useGlobalSearchParams,
-  useLocalSearchParams,
   useRouter,
 } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
-const Navigation = () => {
+const iconMap = {
+  home: require('../assets/icons/home.png'),
+  players : require('../assets/icons/soccer-player.png'),
+  favorites : require('../assets/icons/passion.png'),
+
+};
+
+const NavItem = ({ target, iconName, name }) => {
   const router = useRouter();
-  const globalParams = useGlobalSearchParams();
-  console.log(globalParams);
-  const LocalParams = useLocalSearchParams();
-  console.log(LocalParams);
   const navigateToScreen = (screenName) => {
     router.push(screenName);
   };
+  return (
+    <TouchableOpacity
+      onPress={() => navigateToScreen(target)}
+      style={{ padding: 8 }}
+    >
+      <View style={{ alignItems: "center", gap: 5 }}>
+        <Image
+          style={{ width: 30, height: 30 }}
+          source={iconMap[iconName]}
+        />
+        <Text style={{ color: "#00B8FF", fontWeight: 600, fontSize: 16 }}>
+          {name}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+const Navigation = () => {
+  
   return (
     <View
       style={{
@@ -23,42 +44,21 @@ const Navigation = () => {
         padding: 10,
       }}
     >
-      <TouchableOpacity
-        onPress={() => navigateToScreen("Home")}
-        style={{ padding: 8}}
-      >
-        <View style={{alignItems:"center", gap:5}}>
-          <Image
-            style={{ width: 30, height: 30 }}
-            source={require("../assets/icons/home.png")}
-          />
-          <Text style={{ color: "#00B8FF" , fontWeight:600, fontSize:16 }}>Home</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigateToScreen("Players")}
-        style={{ padding: 8}}
-      >
-        <View style={{alignItems:"center", gap:5}}>
-          <Image
-            style={{ width: 30, height: 30 }}
-            source={require("../assets/icons/soccer-player.png")}
-          />
-          <Text style={{ color: "#00B8FF" , fontWeight:600, fontSize:16 }}>players</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigateToScreen("saved-games")}
-        style={{ padding: 8}}
-      >
-        <View style={{alignItems:"center", gap:5}}>
-          <Image
-            style={{ width: 30, height: 30 }}
-            source={require("../assets/icons/passion.png")}
-          />
-          <Text style={{ color: "#00B8FF" , fontWeight:600, fontSize:16 }}>Favorite</Text>
-        </View>
-      </TouchableOpacity>
+      <NavItem
+        target={"Home"}
+        iconName={"home"}
+        name={"Home"}
+      />
+      <NavItem
+        target={"Players"}
+        iconName={"players"}
+        name={"Players"}
+      />
+      <NavItem
+        target={"saved-games"}
+        iconName={"favorites"}
+        name={"Favorites"}
+      />
     </View>
   );
 };
