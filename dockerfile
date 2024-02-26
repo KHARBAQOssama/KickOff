@@ -1,12 +1,24 @@
-FROM node:16-alpine
+FROM node:20-buster-slim
 
-WORKDIR /app
-COPY package*.json ./
+ARG NODE_ENV=production
+ENV NODE_ENV $NODE_ENV
+
+ARG PORT=19006
+ENV PORT $PORT
+EXPOSE $PORT 19001 19002
+
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+ENV PATH /home/node/.npm-global/bin:$PATH
+RUN npm i --unsafe-perm --allow-root -g npm@latest expo-cli@latest
+
+RUN mkdir /opt/kickoff
+WORKDIR /opt/kickoff
+ENV PATH /opt/kickoff/.bin:$PATH
+COPY ./package.json ./package-lock.json ./
 RUN npm install
+
+WORKDIR /opt/kickoff/app
 
 COPY . .
 
-EXPOSE 19000
-EXPOSE 19001
-
-CMD ["npm", "start"] 
+CMD ["npm","start"]
