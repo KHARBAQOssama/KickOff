@@ -1,7 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import globalService from "./global.service";
-import { fetchGamesFulfilled, fetchLeaguesFulfilled } from "./global.cases";
-
+import {
+  fetchGameFulfilled,
+  fetchGamesFulfilled,
+  fetchLeaguesFulfilled,
+  fetchPlayerFulfilled,
+  fetchPlayersFulfilled,
+  loadSavedFulfilled,
+  setActiveLeagueFulfilled,
+  toggleGameSavingFulfilled
+} from "./global.cases";
 const initialState = {
   games: [],
   savedGames: [],
@@ -36,11 +44,16 @@ export const fetchLeagues = createAsyncThunk("fetchLeagues", async () => {
   return await globalService.fetchLeagues();
 });
 
-export const loadSavedGames = createAsyncThunk(
-  "loadSavedGames",
-  async () => {}
-);
+export const loadSavedGames = createAsyncThunk("loadSavedGames", async () => {
+  return await globalService.loadSavedGames();
+});
 
+export const toggleGameSaving = createAsyncThunk("toggleSave", async (gameId) => {
+  return gameId;
+});
+export const setActiveLeague = createAsyncThunk("setActiveLeague",async (leagueId)=>{
+  return leagueId
+})
 export const globalSlice = createSlice({
   name: "globalSlice",
   initialState,
@@ -52,6 +65,24 @@ export const globalSlice = createSlice({
       })
       .addCase(fetchLeagues.fulfilled, (state, action) => {
         fetchLeaguesFulfilled(state, action);
+      })
+      .addCase(loadSavedGames.fulfilled, (state, action) => {
+        loadSavedFulfilled(state, action);
+      })
+      .addCase(fetchPlayers.fulfilled, (state, action) => {
+        fetchPlayersFulfilled(state, action);
+      })
+      .addCase(fetchPlayer.fulfilled, (state, action) => {
+        fetchPlayerFulfilled(state, action);
+      })
+      .addCase(fetchGame.fulfilled, (state, action) => {
+        fetchGameFulfilled(state, action);
+      })
+      .addCase(toggleGameSaving.fulfilled, (state, action) => {
+        toggleGameSavingFulfilled(state, action);
+      })
+      .addCase(setActiveLeague.fulfilled, (state, action) => {
+        setActiveLeagueFulfilled(state, action);
       });
   },
 });
