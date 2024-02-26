@@ -1,7 +1,6 @@
-import axios from "axios";
 import { LinearGradient } from "expo-linear-gradient";
-import { Redirect, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import {  Stack, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
 import {
   Image,
   SafeAreaView,
@@ -11,31 +10,15 @@ import {
   View,
 } from "react-native";
 import { formatDateTime } from "../../src/utils/functions";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchGame } from "../../src/features/global.slice";
 
 const GameDetails = () => {
-  const router = useRouter();
+  const dispatch = useDispatch();
+  const { gameDetails } = useSelector((state) => state.global);
   const { id } = useLocalSearchParams();
-  const [fixture, setFixture] = useState();
   useEffect(() => {
-    console.log(id);
-    if (id) {
-      axios
-        .get(
-          `https://api.sportmonks.com/v3/football/fixtures/${id}?include=league;participants;lineups;lineups.player;venue`,
-          {
-            headers: {
-              Authorization:
-                "tYgX0otkxc857iGQk2dAVFYOiNCNGi9Qr2sUH40UVpHphNDjdeIdXvrRwb4I",
-            },
-          }
-        )
-        .then((response) => {
-          console.log(response);
-          setFixture(response.data.data);
-          // setActiveLeague(response.data.data[0].id);
-        })
-        .catch((error) => console.log(error));
-    }
+    if (id) dispatch(fetchGame(id));
   }, [id]);
   return (
     <SafeAreaView
@@ -43,15 +26,12 @@ const GameDetails = () => {
     >
       <Stack.Screen
         options={{
-          headerTitle: fixture ? fixture.name : "",
-          // headerShadowVisible: false,
-          // headerBackVisible: false,
-          //   headerShown: false,
+          headerTitle: gameDetails ? gameDetails.name : "",
           headerStyle: { backgroundColor: "#181829" },
           headerTintColor: "white",
         }}
       />
-      {fixture && (
+      {gameDetails && (
         <>
           <ScrollView style={{ flex: 1, paddingHorizontal: 30 }}>
             <View
@@ -81,9 +61,9 @@ const GameDetails = () => {
                 >
                   <Image
                     style={{ width: 20, height: 20 }}
-                    source={{ uri: fixture.league.image_path }}
+                    source={{ uri: gameDetails.league.image_path }}
                   />
-                  <Text>{fixture.league.name}</Text>
+                  <Text>{gameDetails.league.name}</Text>
                 </LinearGradient>
               </View>
               <View
@@ -96,32 +76,32 @@ const GameDetails = () => {
               >
                 <Image
                   style={{ height: 75, width: 75 }}
-                  source={{ uri: fixture.participants[0].image_path }}
+                  source={{ uri: gameDetails.participants[0].image_path }}
                 />
                 <View style={{ alignItems: "center" }}>
                   <Text
                     numberOfLines={1}
                     style={{ color: "#FD4A54", fontWeight: 700, fontSize: 16 }}
                   >
-                    {formatDateTime(fixture.starting_at)[1]}
+                    {formatDateTime(gameDetails.starting_at)[1]}
                   </Text>
                   <Text
                     numberOfLines={1}
                     style={{ color: "#ADADAD", fontWeight: 500 }}
                   >
-                    {formatDateTime(fixture.starting_at)[0]}
+                    {formatDateTime(gameDetails.starting_at)[0]}
                   </Text>
                 </View>
                 <Image
                   style={{ height: 75, width: 75 }}
-                  source={{ uri: fixture.participants[1].image_path }}
+                  source={{ uri: gameDetails.participants[1].image_path }}
                 />
               </View>
               <Text
                 numberOfLines={1}
                 style={{ color: "#ADADAD", fontWeight: 500, marginTop: 16 }}
               >
-                {fixture.venue.name}
+                {gameDetails.venue.name}
               </Text>
             </View>
             <View>
@@ -138,7 +118,7 @@ const GameDetails = () => {
               </Text>
             </View>
             <View style={{}}>
-              {fixture.lineups.length != 0 ? (
+              {gameDetails.lineups.length != 0 ? (
                 <View
                   style={{
                     flexDirection: "row",
@@ -149,8 +129,8 @@ const GameDetails = () => {
                   }}
                 >
                   <View style={{}}>
-                    {fixture.lineups.map((lineup) => {
-                      if (lineup.team_id == fixture.participants[0].id) {
+                    {gameDetails.lineups.map((lineup) => {
+                      if (lineup.team_id == gameDetails.participants[0].id) {
                         return (
                           <TouchableOpacity
                             style={{
@@ -189,8 +169,8 @@ const GameDetails = () => {
                     })}
                   </View>
                   <View style={{}}>
-                    {fixture.lineups.map((lineup) => {
-                      if (lineup.team_id == fixture.participants[1].id) {
+                    {gameDetails.lineups.map((lineup) => {
+                      if (lineup.team_id == gameDetails.participants[1].id) {
                         return (
                           <TouchableOpacity
                             style={{
