@@ -1,4 +1,4 @@
-import { Redirect, Stack, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { Image, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 
 const index = () => {
@@ -7,10 +7,6 @@ const index = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#181829" }}>
       <Stack.Screen
         options={{
-          // headerStyle: {},
-          // headerTitle: "",
-          // headerShadowVisible: false,
-          // headerBackVisible: false,
           headerShown: false,
         }}
       />
