@@ -1,12 +1,16 @@
-import { useRouter } from "expo-router"
-import { Image, Text, TouchableOpacity, View } from "react-native"
+import { useRouter } from "expo-router";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
-const Card = ({player}) => {
-    const router = useRouter();
+const Card = ({ player }) => {
+  const router = useRouter();
   return (
-    <TouchableOpacity onPress={()=>{
-        router.push(`player-details/${player.id}`)
-    }} style={{ marginBottom: 12 }}>
+    <TouchableOpacity
+      testID="card-touchable"
+      onPress={() => {
+        router.push(`player-details/${player.id}`);
+      }}
+      style={{ marginBottom: 12 }}
+    >
       <View
         style={{
           backgroundColor: "black",
@@ -33,13 +37,13 @@ const Card = ({player}) => {
               color: "white",
               fontSize: 20,
               fontWeight: 500,
-              width:200,
-              marginBottom:4,
+              width: 200,
+              marginBottom: 4,
             }}
           >
             {player.name}
           </Text>
-          <Text style={{color:"white"}}>{player.position?.name}</Text>
+          <Text style={{ color: "white" }}>{player.position?.name}</Text>
         </View>
         <View
           style={{
@@ -49,6 +53,7 @@ const Card = ({player}) => {
           }}
         >
           <Image
+            testID="country-flag"
             style={{ width: 30, height: 20, borderRadius: 5 }}
             source={{ uri: player.country.image_path }}
           />
@@ -58,7 +63,7 @@ const Card = ({player}) => {
         </View>
       </View>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
-export default Card
+export default Card;
