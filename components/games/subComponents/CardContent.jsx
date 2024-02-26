@@ -7,6 +7,7 @@ const CardContent = ({fixture}) => {
     const router = useRouter();
   return (
     <TouchableOpacity
+    testID="card-content-touchable"
     style={{
       alignItems: "center",
       flexDirection: "row",
