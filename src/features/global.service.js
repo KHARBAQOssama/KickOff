@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api";
+const STORAGE_KEY = "savedGames";
 
 const fetchGames = async (leagueId) => {
   const response = await api.get(
@@ -10,7 +11,7 @@ const fetchGames = async (leagueId) => {
 
 const fetchGame = async (gameId) => {
   const response = await api.get(
-    `/fixtures/${gameId}?include=participants;participants.players;scores`
+    `/fixtures/${gameId}?include=league;participants;lineups;lineups.player;venue`
   );
   return response.data.data;
 };
@@ -32,13 +33,9 @@ const fetchLeagues = async () => {
 };
 
 const loadSavedGames = async () => {
-  try {
     const storedGames = await AsyncStorage.getItem(STORAGE_KEY);
     const parsedGames = storedGames ? JSON.parse(storedGames) : [];
     return parsedGames;
-  } catch (error) {
-    console.error("Error loading saved games:", error);
-  }
 };
 const unSaveGame = async (gameId) => {};
 const globalService = {
