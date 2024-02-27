@@ -7,6 +7,7 @@ import {
   fetchPlayerFulfilled,
   fetchPlayersFulfilled,
   loadSavedFulfilled,
+  removePlayerFulfilled,
   setActiveLeagueFulfilled,
   toggleGameSavingFulfilled
 } from "./global.cases";
@@ -54,6 +55,9 @@ export const toggleGameSaving = createAsyncThunk("toggleSave", async (gameId) =>
 export const setActiveLeague = createAsyncThunk("setActiveLeague",async (leagueId)=>{
   return leagueId
 })
+export const removePlayer = createAsyncThunk('removePlayer',async (playerId)=>{
+  return playerId
+})
 export const globalSlice = createSlice({
   name: "globalSlice",
   initialState,
@@ -83,6 +87,9 @@ export const globalSlice = createSlice({
       })
       .addCase(setActiveLeague.fulfilled, (state, action) => {
         setActiveLeagueFulfilled(state, action);
+      })
+      .addCase(removePlayer.fulfilled, (state, action) => {
+        removePlayerFulfilled(state, action);
       });
   },
 });

@@ -17,7 +17,7 @@ const FavoriteToggler = ({ fixtureId }) => {
       }}
       style={{ position: "absolute", top: 16, right: 16 }}
     >
-      <Image
+      <Image testID="heart-icon"
         style={{ height: 24, width: 24 }}
         source={icons[savedGames.includes(fixtureId) ? "saved" : "default"]}
       />

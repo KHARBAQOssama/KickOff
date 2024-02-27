@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
 import Card from "./Card";
-import * as ExpoRouter from "expo-router"; // Import the entire module for mocking
+import * as ExpoRouter from "expo-router"; 
 
 describe("Card", () => {
   it("renders correctly", () => {
@@ -13,7 +13,6 @@ describe("Card", () => {
       country: { image_path: "path/to/countryFlag.jpg", iso3: "USA" },
     };
 
-    // Mock the useRouter function
     jest.spyOn(ExpoRouter, "useRouter").mockReturnValue({ push: jest.fn() });
 
     const { getByText, getByTestId } = render(<Card player={player} />);

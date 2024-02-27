@@ -2,11 +2,13 @@ import { useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 const Card = ({ player }) => {
+  // const dispatch = useDispatch();
   const router = useRouter();
   return (
     <TouchableOpacity
       testID="card-touchable"
       onPress={() => {
+        // dispatch(removePlayer(player.id))
         router.push(`player-details/${player.id}`);
       }}
       style={{ marginBottom: 12 }}

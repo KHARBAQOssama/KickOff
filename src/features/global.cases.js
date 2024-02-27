@@ -23,6 +23,11 @@ export const fetchGameFulfilled = (state, action) => {
 export const setActiveLeagueFulfilled = (state, action) => {
   state.activeLeague = action.payload;
 };
+export const removePlayerFulfilled = (state, action) => {
+  const playerId = action.payload;
+  const newPlayers = state.players.filter(player => player.id != playerId)
+  state.players = newPlayers;
+};
 export const toggleGameSavingFulfilled = (state, action) => {
   const gameId = action.payload;
 
@@ -33,3 +38,4 @@ export const toggleGameSavingFulfilled = (state, action) => {
   AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedGames));
   state.savedGames = updatedGames;
 };
+
