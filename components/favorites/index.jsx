@@ -49,7 +49,7 @@ const index = () => {
         </>
       ) : (
         fixtures.map((fixture) => (
-            <Card fixture={fixture}/>
+            <Card key={fixture.id} fixture={fixture}/>
         ))
       )}
     </ScrollView>

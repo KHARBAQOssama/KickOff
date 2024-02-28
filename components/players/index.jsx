@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Card from "./Card";
 import { useEffect, useState } from "react";
 import { fetchPlayers } from "../../src/features/global.slice";
-import { FlatList, ScrollView } from "react-native";
+import { FlatList, ScrollView, View } from "react-native";
 
 const index = ({ searchStatement }) => {
   const dispatch = useDispatch();
@@ -21,7 +21,7 @@ const index = ({ searchStatement }) => {
     }
   }, [searchStatement]);
   return (
-    <ScrollView style={{ padding: 24 }}>
+    <View style={{ padding: 24 }}>
       {searchStatement == "" ? (
         <>
           <FlatList
@@ -39,7 +39,7 @@ const index = ({ searchStatement }) => {
           />
         </>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
